@@ -6,9 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Laravel') }}</title>
     {{-- Vite resources --}}
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/assets/sass/app.scss'])
 </head>
 <body>
 @yield('content')
+{{-- Vite resources --}}
+@vite(['resources/assets/js/app.js'])
 </body>
 </html>

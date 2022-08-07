@@ -1,11 +1,15 @@
 import * as VueRouter from 'vue-router';
 
 // Import configs
+import authCfg from './configs/auth';
 import landingCfg from './configs/landing';
 
 // Route options
 const routeOptions = [
-    { path: '/', name: 'HomePage', meta: { config: landingCfg } }
+    { path: '/', name: 'HomePage', meta: { config: landingCfg } },
+    { path: '/register', name: 'RegisterPage', meta: { config: authCfg } },
+    { path: '/login', name: 'LoginPage', meta: { config: authCfg } },
+    { path: '/forgot', name: 'ForgotPassPage', meta: { config: authCfg } },
 ]
 
 // Map route options

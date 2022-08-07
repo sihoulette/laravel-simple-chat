@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers;
+use App\Http\Controllers\Web;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('{any}', Controllers\AppController::class)
+Route::get('{any}', Web\AppController::class)
     ->where('any', '^(?!api).*$');
