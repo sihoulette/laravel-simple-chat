@@ -33,7 +33,8 @@
                                     Password
                                 </label>
                                 <input
-                                    id="password" type="password" name="password" v-model="form.password" placeholder="Password"
+                                    id="password" type="password" name="password" v-model="form.password"
+                                    placeholder="Password"
                                     class="border-0 px-3 py-3 placeholder-slate-300 text-slate-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                 />
                                 <small v-if="form.errors.has('password')" class="text-red-400">
@@ -86,7 +87,7 @@ import { Form } from "vform";
 
 export default {
     name: "LoginPage",
-    data () {
+    data() {
         return {
             form: new Form({
                 email: '',
@@ -96,25 +97,22 @@ export default {
         }
     },
     methods: {
-        cleanError (name) {
+        cleanError(name) {
             if (this.form.errors.has(name)) {
                 this.form.errors.clear(name);
             }
         },
-        submitLogin () {
+        submitLogin() {
             const that = this;
             that.form.post('/api/auth/login').then((resp) => {
                 that.form.reset();
-                if (typeof resp.data === 'object'
-                    && typeof resp.data.access_token === 'string'
-                ) {
-                    that.$auth().setToken(resp.data);
+                if (typeof resp.data.success === 'boolean' && resp.data.success) {
+                    that.$auth().login(resp.data.token, resp.data.user);
+
+                    return that.$router.push({name: 'HomePage'});
                 }
-               return that.$router.push({name: 'HomePage'});
             }, (err) => {
-                if (typeof err.response.data === 'object'
-                    && typeof err.response.data.errors === 'object'
-                ) {
+                if (typeof err.response.data.errors === 'object') {
                     that.form.errors.set(err.response.data.errors);
                 }
             });
