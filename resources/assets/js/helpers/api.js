@@ -20,7 +20,7 @@ $api.interceptors.request.use(config => {
 
 // End request, response from backend
 $api.interceptors.response.use(config => {
-    let authToken = auth.getToken();
+    const authToken = auth.getToken();
     if (typeof authToken === 'string') {
         config.headers.Authorization = `Bearer ${authToken}`;
     }
@@ -30,7 +30,7 @@ $api.interceptors.response.use(config => {
     // Backend response error
     if (error.response.status === 401) {
         if (error.response.data.message) {
-            let refreshToken = auth.getToken();
+            const refreshToken = auth.getToken();
             if (typeof refreshToken === 'string') {
                 // Refresh auth token
                 return axios.post('api/auth/refresh', {}, {
@@ -39,9 +39,9 @@ $api.interceptors.response.use(config => {
                     }
                 }).then(resp => {
                     if (typeof resp.data === 'object') {
-                        auth.setToken(resp.data);
+                        auth.login(resp.data.token, resp.data.user);
                         // Refresh request with new auth token
-                        error.config.headers.Authorization = `Bearer ${resp.data.access_token}`;
+                        error.config.headers.Authorization = `Bearer ${resp.data.token}`;
 
                         return $api.request(error.config);
                     } else {

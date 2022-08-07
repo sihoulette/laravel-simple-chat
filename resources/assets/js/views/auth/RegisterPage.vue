@@ -69,7 +69,8 @@
                                     Confirm password
                                 </label>
                                 <input
-                                    id="password_confirmation" type="password" name="password_confirmation" v-model="form.password_confirmation"
+                                    id="password_confirmation" type="password" name="password_confirmation"
+                                    v-model="form.password_confirmation"
                                     class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                     placeholder="Password"
                                     @change="cleanError('password_confirmation')"
@@ -82,9 +83,9 @@
                             <div>
                                 <label class="inline-flex items-center cursor-pointer">
                                     <input
-                                        id="customCheckLogin" type="checkbox" name="accept" v-model="form.accept"
+                                        id="customCheckLogin" type="checkbox" name="accept_rules" v-model="form.accept_rules"
                                         class="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"
-                                        @change="cleanError('accept')"
+                                        @change="cleanError('accept_rules')"
                                     />
                                     <span class="ml-2 text-sm font-semibold text-blueGray-600">
                                         I agree with the
@@ -93,8 +94,8 @@
                                         </a>
                                     </span>
                                 </label>
-                                <small v-if="form.errors.has('accept')" class="block w-full text-red-400">
-                                    {{ form.errors.get('accept') }}
+                                <small v-if="form.errors.has('accept_rules')" class="block w-full text-red-400">
+                                    {{ form.errors.get('accept_rules') }}
                                 </small>
                             </div>
 
@@ -126,14 +127,15 @@ import { Form } from 'vform';
 
 export default {
     name: "page-register",
-    data () {
+    data() {
         return {
             form: new Form({
                 name: '',
                 email: '',
                 password: '',
                 password_confirmation: '',
-                accept: ''
+                accept_rules: '',
+                _method: 'PUT'
             })
         }
     },
@@ -143,21 +145,19 @@ export default {
                 this.form.errors.clear(name);
             }
         },
-        submitRegister () {
+        submitRegister() {
             const that = this;
             that.form.post('/api/auth/register').then((resp) => {
                 that.form.reset();
-                if (typeof resp.data === 'object'
-                    && typeof resp.data.access_token === 'string'
-                ) {
-                    that.$auth().setToken(resp.data);
+                if (typeof resp.data.success === 'boolean' && resp.data.success) {
+                    that.$auth().login(resp.data.token, resp.data.user);
+
                     return that.$router.push({name: 'HomePage'});
                 }
+
                 return that.$router.push({name: 'LoginPage'});
             }, (err) => {
-                if (typeof err.response.data === 'object'
-                    && typeof err.response.data.errors === 'object'
-                ) {
+                if (typeof err.response.data.errors === 'object') {
                     that.form.errors.set(err.response.data.errors);
                 }
             });

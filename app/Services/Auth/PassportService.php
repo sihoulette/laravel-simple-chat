@@ -30,7 +30,7 @@ final class PassportService
             $user = User::create($data);
             event(new Registered($user));
             $resp['user'] = $user;
-            $resp['accessToken'] = $user->createToken('Laravel9PassportAuth')
+            $resp['token'] = $user->createToken('Laravel9PassportAuth')
                 ->accessToken;
             DB::commit();
         } catch (\Exception $e) {

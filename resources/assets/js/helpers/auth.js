@@ -1,29 +1,53 @@
 const $auth = {
-    getToken: function() {
-        let token = null,
-            tokenParams = localStorage.getItem('auth');
-        if (typeof tokenParams === 'string') {
-            tokenParams = JSON.parse(tokenParams);
-            let rememberMe = tokenParams.remember_me,
-                expireTime = parseInt(tokenParams.expires_in);
-            if (rememberMe || Date.now() > expireTime) {
-                token = tokenParams.access_token;
-            }
-        }
-        return token;
+    /**
+     * Login User with token
+     *
+     * @param token {string}
+     * @param user {Object}
+     */
+    login: (token, user) => {
+        window.localStorage.setItem('token', token);
+        window.localStorage.setItem('user', JSON.stringify(user));
     },
-    setToken: function(data) {
-        // Calc access token expire timestamp
-        let expireTime = parseInt(data.expires_in);
-        expireTime = Date.now() + expireTime + 1000;
-        // Save access token params
-        localStorage.setItem('auth', JSON.stringify({
-            expires_in: expireTime,
-            token_type: data.token_type,
-            remember_me: data.remember_me,
-            access_token: data.access_token
-        }));
+
+    /**
+     * Check user credentials
+     *
+     * @returns {boolean}
+     */
+    checkLogin: () => {
+        const token = window.localStorage.getItem('token'),
+            user = JSON.parse(window.localStorage.getItem('user'));
+
+        return typeof token === 'string' && token.length > 0
+            && typeof user === 'object' && user.length > 0;
     },
+
+    /**
+     * User Data Object
+     *
+     * @returns {{}|null}
+     */
+    getUser: () => {
+        return JSON.parse(window.localStorage.getItem('user'));
+    },
+
+    /**
+     * User Auth Token
+     *
+     * @returns {string|null}
+     */
+    getToken: () => {
+        return window.localStorage.getItem('token');
+    },
+
+    /**
+     * Logout User
+     */
+    logout: () => {
+        window.localStorage.removeItem('token');
+        window.localStorage.removeItem('user');
+    }
 };
 
 export default $auth;
