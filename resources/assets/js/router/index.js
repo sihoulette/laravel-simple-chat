@@ -3,14 +3,19 @@ import * as VueRouter from 'vue-router';
 // Import configs
 import authCfg from './configs/auth';
 import landingCfg from './configs/landing';
+import messengerCfg from './configs/messenger';
 
 // Route options
 const routeOptions = [
+    // Landing route
     { path: '/', name: 'HomePage', meta: { config: landingCfg } },
+    // Auth routes
     { path: '/register', name: 'RegisterPage', meta: { config: authCfg } },
     { path: '/login', name: 'LoginPage', meta: { config: authCfg } },
     { path: '/forgot', name: 'ForgotPassPage', meta: { config: authCfg } },
-]
+    // Messenger routes
+    { path: '/messages', name: 'MessagesPage', meta: { config: messengerCfg } },
+];
 
 // Map route options
 const routes = routeOptions.map(route => {

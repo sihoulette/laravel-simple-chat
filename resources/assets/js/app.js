@@ -1,18 +1,25 @@
 import './bootstrap';
+import 'flowbite';
 
 import { createApp } from 'vue';
 
 import App from './base/App.vue';
-import AppLayout from './base/AppLayout.vue';
-import router from './router.js';
 
+import store from './store';
+import router from './router';
+
+// Import mixins
 import apiMixin from './mixins/api.js';
-import authMixin from './mixins/auth.js';
+
+// Import components
+import FontAwesomeIcon from './packages/fontawesome';
+import AppLayout from './base/AppLayout.vue';
 
 // Create application
-const app = createApp(App);
-app.use(router)
+const app = createApp(App)
+app.use(store)
+    .use(router)
+    .component('font-awesome-icon', FontAwesomeIcon)
     .component('AppLayout', AppLayout)
     .mixin(apiMixin)
-    .mixin(authMixin)
     .mount('#app');
