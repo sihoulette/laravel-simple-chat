@@ -27,10 +27,10 @@ const routes = routeOptions.map(route => {
                 && typeof route.meta.config.view === 'object'
                 && typeof route.meta.config.view.path === 'string'
             ) {
-                return import(`./views/${route.meta.config.view.path}/${route.name}.vue`);
+                return import(`../views/${route.meta.config.view.path}/${route.name}.vue`);
             }
 
-            return import(`./views/${route.name}.vue`);
+            return import(`../views/${route.name}.vue`);
         }
     }
 });

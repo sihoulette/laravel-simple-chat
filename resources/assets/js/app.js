@@ -9,7 +9,7 @@ import store from './store';
 import router from './router';
 
 // Import mixins
-import apiMixin from './mixins/api.js';
+import apiMixin from './mixins/api';
 
 // Import components
 import FontAwesomeIcon from './packages/fontawesome';
