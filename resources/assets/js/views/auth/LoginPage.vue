@@ -83,7 +83,8 @@
 </template>
 
 <script>
-import { Form } from "vform";
+import { Form } from 'vform';
+import apiCfg from './../../configs/api';
 
 export default {
     name: "LoginPage",
@@ -104,11 +105,13 @@ export default {
         },
         submitLogin() {
             const that = this;
-            that.form.post('/api/auth/login').then((resp) => {
+            that.form.post(apiCfg.baseUrl + '/auth/login').then((resp) => {
                 that.form.reset();
                 if (typeof resp.data.success === 'boolean' && resp.data.success) {
-                    that.$auth().login(resp.data.token, resp.data.user);
-
+                    that.$store.dispatch('auth/login', {
+                        user: resp.data.user,
+                        token: resp.data.token
+                    });
                     return that.$router.push({name: 'HomePage'});
                 }
             }, (err) => {

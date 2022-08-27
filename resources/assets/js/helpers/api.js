@@ -1,15 +1,21 @@
-import axios from "axios";
-import auth from "./auth";
-import router from "../router";
+import axios from 'axios';
 
-const apiConfig = {withCredentials: true};
-const $api = axios.create(apiConfig);
+import store from './../store';
+import router from "./../router";
+
+import apiCfg from './../configs/api';
+
+// Get user token data
+const tokenData = store.getters["auth/getToken"];
+
+// Create api instance
+const $api = axios.create({ withCredentials: true });
 
 // Start request to backend
 $api.interceptors.request.use(config => {
-    let authToken = auth.getToken();
-    if (typeof authToken === 'string') {
-        config.headers.Authorization = `Bearer ${authToken}`;
+    if (typeof tokenData === 'object') {
+        /** @var tokenData.access_token {string} */
+        config.headers.Authorization = `Bearer ${tokenData.access_token}`;
     }
 
     return config;
@@ -20,9 +26,9 @@ $api.interceptors.request.use(config => {
 
 // End request, response from backend
 $api.interceptors.response.use(config => {
-    const authToken = auth.getToken();
-    if (typeof authToken === 'string') {
-        config.headers.Authorization = `Bearer ${authToken}`;
+    if (typeof tokenData === 'object') {
+        /** @var tokenData.access_token {string} */
+        config.headers.Authorization = `Bearer ${tokenData.access_token}`;
     }
 
     return config;
@@ -30,18 +36,20 @@ $api.interceptors.response.use(config => {
     // Backend response error
     if (error.response.status === 401) {
         if (error.response.data.message) {
-            const refreshToken = auth.getToken();
-            if (typeof refreshToken === 'string') {
+            /** @var tokenData.refresh_token {string} */
+            if (typeof tokenData === 'object') {
                 // Refresh auth token
-                return axios.post('api/auth/refresh', {}, {
+                return axios.post(apiCfg.baseUrl + '/auth/refresh', {}, {
                     headers: {
-                        Authorization: `Bearer ${refreshToken}`
+                        Authorization: `Bearer ${tokenData.refresh_token}`
                     }
                 }).then(resp => {
                     if (typeof resp.data === 'object') {
-                        auth.login(resp.data.token, resp.data.user);
+                        this.$store.dispatch('auth/refresh', {
+                            token: resp.data.token
+                        });
                         // Refresh request with new auth token
-                        error.config.headers.Authorization = `Bearer ${resp.data.token}`;
+                        error.config.headers.Authorization = `Bearer ${resp.data.token.access_token}`;
 
                         return $api.request(error.config);
                     } else {
