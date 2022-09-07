@@ -9,7 +9,7 @@ INSTALLATION
 ### Clone repository
 You can then clone this project repository using the following command in domain directory root:
 ~~~
-git clone git@github.com:sihoulette/simple.chat.git . 
+git clone git@github.com:sihoulette/laravel-simple-chat.git .
 ~~~
 
 ### Install via Composer
